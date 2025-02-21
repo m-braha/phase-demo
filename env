@@ -1,0 +1,5 @@
+DEMO_API_KEY=prod-value1
+DEMO_DATABASE_URL=prod-value2
+DEMO_ENCRYPTION_KEY=prod-value3
+DEMO_SERVICE_URL=prod-value4
+DEMO_SECRET_TOKEN=prod-value5
