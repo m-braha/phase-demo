@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   build-and-test:
@@ -41,11 +42,20 @@ jobs:
           # Wait for container to start
           sleep 5
 
-          # Test the endpoint
+          # Test the endpoint and capture response
           curl -s http://localhost:3000/env | tee response.json
 
-          # Verify we got a response with environment variables
-          if ! grep -q "DEMO_API_KEY" response.json; then
-            echo "Error: Environment variables not found in response"
+          # Check that environment variables were actually set
+          if grep -q '"DEMO_API_KEY":"Not set"' response.json; then
+            echo "Error: DEMO_API_KEY was not set by Phase"
             exit 1
           fi
+
+          if grep -q '"DEMO_DATABASE_URL":"Not set"' response.json; then
+            echo "Error: DEMO_DATABASE_URL was not set by Phase"
+            exit 1
+          fi
+
+          # Print the response for debugging
+          echo "Environment variables successfully loaded from Phase:"
+          cat response.json
