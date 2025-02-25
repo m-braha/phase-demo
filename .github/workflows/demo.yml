@@ -28,14 +28,16 @@ jobs:
 
       - name: Run container and test secrets
         env:
-          PHASE_ENVIRONMENT: staging
-          PHASE_SERVICE_TOKEN: ${{ secrets.PHASE_SERVICE_TOKEN_STAGING }}
+          DEMO_API_KEY: ${{ secrets.DEMO_API_KEY }}
+          DEMO_SERVICE_URL: ${{ secrets.DEMO_SERVICE_URL }}
+          DEMO_DATABASE_URL: ${{ secrets.DEMO_DATABASE_URL }}
+          DEMO_ENCRYPTION_KEY: ${{ secrets.DEMO_ENCRYPTION_KEY }}
+          DEMO_SECRET_TOKEN: ${{ secrets.DEMO_SECRET_TOKEN }}
+          DEMO_SERVICE_URL: ${{ secrets.DEMO_SERVICE_URL }}
         run: |
           docker run -d \
             --name phase-demo \
             -p 3000:3000 \
-            -e PHASE_ENVIRONMENT \
-            -e PHASE_SERVICE_TOKEN \
             phase-demo:test
 
           # Wait for container to start

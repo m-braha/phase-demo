@@ -1,5 +1,7 @@
 FROM node:18-slim
 
+ARG API_KEY
+
 # Install Phase CLI
 RUN apt-get update && apt-get install -y curl && \
     curl -fsSL https://pkg.phase.dev/install.sh | bash && \
@@ -18,6 +20,7 @@ COPY src/ ./src/
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
+ENV DEMO_API_KEY=${API_KEY}
 ENV PHASE_HOST=https://phase.aops.tools
 ENV PHASE_APP=example-app
 
