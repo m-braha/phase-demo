@@ -27,15 +27,14 @@ jobs:
           build-args: API_KEY=${{ secrets.DEMO_API_KEY }}
 
       - name: Run container and test secrets
-        env:
-          DEMO_API_KEY: ${{ secrets.DEMO_API_KEY }}
-          DEMO_DATABASE_URL: ${{ secrets.DEMO_DATABASE_URL }}
-          DEMO_ENCRYPTION_KEY: ${{ secrets.DEMO_ENCRYPTION_KEY }}
-          DEMO_SECRET_TOKEN: ${{ secrets.DEMO_SECRET_TOKEN }}
-          DEMO_SERVICE_URL: ${{ secrets.DEMO_SERVICE_URL }}
         run: |
           docker run -d \
             --name phase-demo \
+            -e ${{ secrets.DEMO_API_KEY }} \
+            -e ${{ secrets.DEMO_DATABASE_URL }} \
+            -e ${{ secrets.DEMO_ENCRYPTION_KEY }} \
+            -e ${{ secrets.DEMO_SECRET_TOKEN }} \
+            -e ${{ secrets.DEMO_SERVICE_URL }} \
             -p 3000:3000 \
             phase-demo:test
 
