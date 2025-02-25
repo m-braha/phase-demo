@@ -30,11 +30,11 @@ jobs:
         run: |
           docker run -d \
             --name phase-demo \
-            -e ${{ secrets.DEMO_API_KEY }} \
-            -e ${{ secrets.DEMO_DATABASE_URL }} \
-            -e ${{ secrets.DEMO_ENCRYPTION_KEY }} \
-            -e ${{ secrets.DEMO_SECRET_TOKEN }} \
-            -e ${{ secrets.DEMO_SERVICE_URL }} \
+            -e DEMO_API_KEY=${{ secrets.DEMO_API_KEY }} \
+            -e DEMO_DATABASE_URL=${{ secrets.DEMO_DATABASE_URL }} \
+            -e DEMO_ENCRYPTION_KEY=${{ secrets.DEMO_ENCRYPTION_KEY }} \
+            -e DEMO_SECRET_TOKEN=${{ secrets.DEMO_SECRET_TOKEN }} \
+            -e DEMO_SERVICE_URL=${{ secrets.DEMO_SERVICE_URL }} \
             -p 3000:3000 \
             phase-demo:test
 
