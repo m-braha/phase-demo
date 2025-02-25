@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -24,23 +24,23 @@ jobs:
           load: true
           tags: phase-demo:test
           push: false
+          build-args:
+            API_KEY: ${{ secrets.DEMO_API_KEY }}
 
       - name: Run container and test secrets
         env:
-          PHASE_APP: example-app
           PHASE_ENVIRONMENT: staging
           PHASE_SERVICE_TOKEN: ${{ secrets.PHASE_SERVICE_TOKEN_STAGING }}
         run: |
           docker run -d \
             --name phase-demo \
             -p 3000:3000 \
-            -e PHASE_APP \
             -e PHASE_ENVIRONMENT \
             -e PHASE_SERVICE_TOKEN \
             phase-demo:test
 
           # Wait for container to start
-          sleep 5
+          sleep 3
 
           # Test the endpoint and capture response
           curl -s http://localhost:3000/env | tee response.json
