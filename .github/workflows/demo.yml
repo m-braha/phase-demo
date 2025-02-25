@@ -29,7 +29,6 @@ jobs:
       - name: Run container and test secrets
         env:
           DEMO_API_KEY: ${{ secrets.DEMO_API_KEY }}
-          DEMO_SERVICE_URL: ${{ secrets.DEMO_SERVICE_URL }}
           DEMO_DATABASE_URL: ${{ secrets.DEMO_DATABASE_URL }}
           DEMO_ENCRYPTION_KEY: ${{ secrets.DEMO_ENCRYPTION_KEY }}
           DEMO_SECRET_TOKEN: ${{ secrets.DEMO_SECRET_TOKEN }}
