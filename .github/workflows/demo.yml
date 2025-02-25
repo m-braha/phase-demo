@@ -25,7 +25,7 @@ jobs:
           tags: phase-demo:test
           push: false
           build-args:
-            API_KEY: ${{ secrets.DEMO_API_KEY }}
+            - API_KEY=${{ secrets.DEMO_API_KEY }}
 
       - name: Run container and test secrets
         env:
