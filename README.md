@@ -84,57 +84,50 @@ Required GitHub Secrets:
 
 1. Configure your AWS credentials
 
-2. Create the Phase service token in AWS Secrets Manager:
-
-   ```bash
-   aws secretsmanager create-secret \
-     --name "phase/production/service-token" \
-     --secret-string "your-production-token"
-   ```
-
-3. Initialize Terraform:
+2. Initialize Terraform:
 
    ```bash
    cd terraform
    terraform init
    ```
 
-4. Create infrastructure and ECR repository:
+3. Create initial infrastructure with a dummy container image (this creates the ECR repository):
 
    ```bash
-   terraform apply -target=aws_ecr_repository.app
+   terraform plan -var="phase_service_token=dummy" -var="phase_app=demo-app" -var="phase_environment=prod"
+   terraform apply -var="phase_service_token=dummy" -var="phase_app=demo-app" -var="phase_environment=prod"
    ```
 
-5. Build and push your local image:
+4. Note the ECR repository URL from the terraform output. Build and push your container:
 
    ```bash
-   # The terraform output will provide these commands
+   # Login to ECR
    aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin <ECR_REPO_URL>
-   docker build -t phase-demo .
-   docker tag phase-demo:latest <ECR_REPO_URL>:latest
+
+   # Build for x86_64 (required for ECS)
+   docker build --platform linux/amd64 -t phase-demo-prod .
+
+   # Tag and push
+   docker tag phase-demo-prod:latest <ECR_REPO_URL>:latest
    docker push <ECR_REPO_URL>:latest
    ```
 
-6. Deploy the service:
+5. Deploy the full infrastructure with your Phase service token:
 
    ```bash
    terraform apply \
-     -var="phase_app=your-app-name" \
-     -var="phase_environment=production" \
-     -var="container_image=<ECR_REPO_URL>:latest"
+     -var="phase_service_token=your-actual-token" \
+     -var="phase_app=demo-app" \
+     -var="phase_environment=prod"
    ```
 
-7. To update with a new image version:
+6. The ALB DNS name will be shown in the terraform output. You can access your application at:
 
-   ```bash
-   # Build and push new version
-   docker build -t phase-demo .
-   docker tag phase-demo:latest <ECR_REPO_URL>:latest
-   docker push <ECR_REPO_URL>:latest
-
-   # Update ECS service (it will pull the new image)
-   aws ecs update-service --cluster phase-demo-production --service phase-demo-production --force-new-deployment
    ```
+   http://<ALB_DNS_NAME>
+   ```
+
+   Note: The ALB is configured to only allow traffic from the specified IP (50.203.25.222/32)
 
 ## API Endpoints
 
@@ -144,10 +137,8 @@ Required GitHub Secrets:
 ## Security Notes
 
 - The application never stores secrets locally
-- Secrets can be injected at runtime through Phase or set directly
-- Different environments use different Phase service tokens
-- Service tokens are stored securely:
-  - Local: Environment variables (optional)
-  - GitHub Actions: GitHub Secrets
-  - ECS: AWS Secrets Manager
+- Secrets are injected at runtime through Phase
+- Service tokens are stored securely in AWS Secrets Manager
+- ALB is configured to only allow traffic from specified IP addresses
+- ECS tasks run in private subnets with access controlled via security groups
 - No secrets or tokens are committed to the repository or included in the container image
