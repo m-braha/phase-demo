@@ -21,7 +21,7 @@ runs:
     - name: Install Phase CLI
       shell: bash
       run: |
-        curl -sSL https://cli.phase.dev/install.sh | bash
+        curl -fsSL https://pkg.phase.dev/install.sh | bash
 
     - name: Configure Phase CLI and fetch secrets
       shell: bash
