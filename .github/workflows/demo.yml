@@ -17,7 +17,7 @@ jobs:
         uses: ./.github/actions/phase-secrets
         with:
           phase_token: ${{ secrets.PHASE_SERVICE_TOKEN_STAGING }}
-          app: demo-app
+          app: example-app
           environment: staging
 
       # Test that secrets are available
