@@ -23,7 +23,7 @@ The application expects the following environment variables:
 
 These can be provided either through Phase or set directly.
 
-For Phase configuration (optional):
+For Phase configuration (optional), set these too:
 
 - `PHASE_APP` - The name of your Phase application
 - `PHASE_ENVIRONMENT` - The environment to use (e.g., development, staging, production)
@@ -55,6 +55,8 @@ docker run \
 ```
 
 #### Option 2: Direct Environment Variables
+
+This bypasses Phase completely.
 
 ```bash
 docker run \
@@ -97,12 +99,41 @@ Required GitHub Secrets:
    terraform init
    ```
 
-4. Deploy:
+4. Create infrastructure and ECR repository:
+
+   ```bash
+   terraform apply -target=aws_ecr_repository.app
+   ```
+
+5. Build and push your local image:
+
+   ```bash
+   # The terraform output will provide these commands
+   aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin <ECR_REPO_URL>
+   docker build -t phase-demo .
+   docker tag phase-demo:latest <ECR_REPO_URL>:latest
+   docker push <ECR_REPO_URL>:latest
+   ```
+
+6. Deploy the service:
+
    ```bash
    terraform apply \
-     -var="container_image=your-image:tag" \
      -var="phase_app=your-app-name" \
-     -var="phase_environment=production"
+     -var="phase_environment=production" \
+     -var="container_image=<ECR_REPO_URL>:latest"
+   ```
+
+7. To update with a new image version:
+
+   ```bash
+   # Build and push new version
+   docker build -t phase-demo .
+   docker tag phase-demo:latest <ECR_REPO_URL>:latest
+   docker push <ECR_REPO_URL>:latest
+
+   # Update ECS service (it will pull the new image)
+   aws ecs update-service --cluster phase-demo-production --service phase-demo-production --force-new-deployment
    ```
 
 ## API Endpoints

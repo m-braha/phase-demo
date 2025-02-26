@@ -1,0 +1,46 @@
+name: "Phase Environment Secrets"
+description: "Fetch and set Phase secrets for a specific environment using Phase CLI"
+inputs:
+  phase_token:
+    description: "Phase service token"
+    required: true
+  app:
+    description: "Phase application name"
+    required: true
+  environment:
+    description: "Phase environment name"
+    required: true
+  phase_host:
+    description: "Phase API host"
+    required: false
+    default: "https://phase.aops.tools"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Phase CLI
+      shell: bash
+      run: |
+        curl -sSL https://cli.phase.dev/install.sh | bash
+
+    - name: Configure Phase CLI and fetch secrets
+      shell: bash
+      run: |
+        # Configure Phase CLI
+        export PHASE_SERVICE_TOKEN="${{ inputs.phase_token }}"
+        export PHASE_HOST="${{ inputs.phase_host }}"
+
+        # Fetch secrets and set them as environment variables
+        echo "Fetching secrets for app ${{ inputs.app }} in environment ${{ inputs.environment }}"
+
+        # Export secrets directly to GitHub environment
+        phase secrets export \
+          --app "${{ inputs.app }}" \
+          --env "${{ inputs.environment }}" >> $GITHUB_ENV
+
+        if [ $? -ne 0 ]; then
+          echo "Failed to fetch or set Phase secrets"
+          exit 1
+        fi
+
+        echo "Successfully set Phase secrets as GitHub environment variables"

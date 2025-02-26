@@ -8,53 +8,28 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-test:
+  fetch-phase-secrets:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Build container
-        uses: docker/build-push-action@v4
+      - name: Fetch Phase secrets
+        uses: ./.github/actions/phase-secrets
         with:
-          context: .
-          load: true
-          tags: phase-demo:test
-          push: false
-          build-args: API_KEY=${{ secrets.DEMO_API_KEY }}
+          phase_token: ${{ secrets.PHASE_SERVICE_TOKEN_STAGING }}
+          app: demo-app
+          environment: staging
 
-      - name: Run container and test secrets
+      # Test that secrets are available
+      - name: Test secrets availability
         run: |
-          docker run -d \
-            --name phase-demo \
-            -e DEMO_API_KEY=${{ secrets.DEMO_API_KEY }} \
-            -e DEMO_DATABASE_URL=${{ secrets.DEMO_DATABASE_URL }} \
-            -e DEMO_ENCRYPTION_KEY=${{ secrets.DEMO_ENCRYPTION_KEY }} \
-            -e DEMO_SECRET_TOKEN=${{ secrets.DEMO_SECRET_TOKEN }} \
-            -e DEMO_SERVICE_URL=${{ secrets.DEMO_SERVICE_URL }} \
-            -p 3000:3000 \
-            phase-demo:test
-
-          # Wait for container to start
-          sleep 3
-
-          # Test the endpoint and capture response
-          curl -s http://localhost:3000/env | tee response.json
-
-          # Check that environment variables were actually set
-          if grep -q '"DEMO_API_KEY":"Not set"' response.json; then
-            echo "Error: DEMO_API_KEY was not set by Phase"
+          if [ -z "$DEMO_TROVE_AUTH" ]; then
+            echo "Error: Phase secrets not properly set"
             exit 1
           fi
+          echo "Phase secrets successfully loaded"
 
-          if grep -q '"DEMO_DATABASE_URL":"Not set"' response.json; then
-            echo "Error: DEMO_DATABASE_URL was not set by Phase"
-            exit 1
-          fi
-
-          # Print the response for debugging
-          echo "Environment variables successfully loaded from Phase:"
-          cat response.json
+      # Build container, ensuring required DEMO_TROVE_AUTH is set
+      - name: Build container
+        run: |
+          docker build --build-arg TROVE_AUTH=${DEMO_TROVE_AUTH} -t demo-app .

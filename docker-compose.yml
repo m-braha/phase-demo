@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        TROVE_AUTH: ${DEMO_TROVE_AUTH}
     ports:
       - "3000:3000"
     volumes:
@@ -11,6 +13,7 @@ services:
       - ./package-lock.json:/app/package-lock.json
       - /app/node_modules
     command: npm run dev
+    stop_grace_period: 1s
     environment:
       - NODE_ENV=development
       # Option 1: Use Phase
@@ -26,6 +29,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        TROVE_AUTH: ${DEMO_TROVE_AUTH}
     ports:
       - "3001:3000"
     volumes:
@@ -34,6 +39,7 @@ services:
       - ./package-lock.json:/app/package-lock.json
       - /app/node_modules
     command: npm run dev
+    stop_grace_period: 1s
     environment:
       - NODE_ENV=development
       # Option 1: Use Phase
@@ -49,6 +55,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        TROVE_AUTH: ${DEMO_TROVE_AUTH}
     ports:
       - "3002:3000"
     volumes:
@@ -57,6 +65,7 @@ services:
       - ./package-lock.json:/app/package-lock.json
       - /app/node_modules
     command: npm run dev
+    stop_grace_period: 1s
     environment:
       - NODE_ENV=development
       # Option 1: Use Phase

@@ -1,6 +1,12 @@
 FROM node:18-slim
 
-ARG API_KEY
+ARG TROVE_AUTH
+ENV TROVE_AUTH=${TROVE_AUTH:-}
+
+# Fail if TROVE_AUTH is not set
+RUN if [ -z "$TROVE_AUTH" ]; then \
+    echo "TROVE_AUTH is not set" && exit 1; \
+    fi
 
 # Install Phase CLI
 RUN apt-get update && apt-get install -y curl && \
@@ -20,7 +26,6 @@ COPY src/ ./src/
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-ENV DEMO_API_KEY=${API_KEY}
 ENV PHASE_HOST=https://phase.aops.tools
 ENV PHASE_APP=example-app
 
