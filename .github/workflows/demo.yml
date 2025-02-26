@@ -8,28 +8,18 @@ on:
   workflow_dispatch:
 
 jobs:
-  fetch-phase-secrets:
+  demo-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Fetch Phase secrets
+      - name: Fetch Phase secrets into environment
         uses: ./.github/actions/phase-secrets
         with:
           phase_token: ${{ secrets.PHASE_SERVICE_TOKEN_STAGING }}
           app: example-app
           environment: staging
 
-      # Test that secrets are available
-      - name: Test secrets availability
-        run: |
-          if [ -z "$DEMO_TROVE_AUTH" ]; then
-            echo "Error: Phase secrets not properly set"
-            exit 1
-          fi
-          echo "Phase secrets successfully loaded"
-
-      # Build container, ensuring required DEMO_TROVE_AUTH is set
       - name: Build container
         run: |
           docker build --build-arg TROVE_AUTH=${DEMO_TROVE_AUTH} -t demo-app .
