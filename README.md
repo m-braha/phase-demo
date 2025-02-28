@@ -13,7 +13,7 @@ This demo application showcases how to use Phase for secrets management across d
 
 ## Environment Variables
 
-The application expects the following environment variables:
+The application expects the following secret environment variables:
 
 - `DEMO_API_KEY`
 - `DEMO_DATABASE_URL`
@@ -23,9 +23,9 @@ The application expects the following environment variables:
 
 These can be provided either through Phase or set directly.
 
-For Phase configuration (optional), set these too:
+For Phase configuration, set these too:
 
-- `PHASE_APP` - The name of your Phase application
+- `PHASE_APP` - The name of the Phase application
 - `PHASE_ENVIRONMENT` - The environment to use (e.g., development, staging, production)
 - `PHASE_SERVICE_TOKEN` - Service token for authenticating with Phase
 
