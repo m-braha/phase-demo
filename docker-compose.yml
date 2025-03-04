@@ -16,7 +16,7 @@ services:
     environment:
       - PHASE_ENVIRONMENT=development
       - PHASE_SERVICE_TOKEN=${PHASE_SERVICE_TOKEN_DEV}
-      # Option 2: Direct env vars
+      # Optionally: Direct env vars
       # - DEMO_API_KEY=local-value1
       # - DEMO_DATABASE_URL=local-value2
       # - DEMO_ENCRYPTION_KEY=local-value3
@@ -40,7 +40,7 @@ services:
     environment:
       - PHASE_ENVIRONMENT=staging
       - PHASE_SERVICE_TOKEN=${PHASE_SERVICE_TOKEN_STAGING}
-      # Option 2: Direct env vars
+      # Optionally: Direct env vars
       # - DEMO_API_KEY=local-value1
       # - DEMO_DATABASE_URL=local-value2
       # - DEMO_ENCRYPTION_KEY=local-value3
@@ -64,7 +64,7 @@ services:
     environment:
       - PHASE_ENVIRONMENT=production
       - PHASE_SERVICE_TOKEN=${PHASE_SERVICE_TOKEN_PROD}
-      # Option 2: Direct env vars
+      # Optionally: Direct env vars
       # - DEMO_API_KEY=local-value1
       # - DEMO_DATABASE_URL=local-value2
       # - DEMO_ENCRYPTION_KEY=local-value3

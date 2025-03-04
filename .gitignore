@@ -1,5 +1,3 @@
 node_modules
-tokens
-docs/
 .terraform/
 *.tfstate.backup
